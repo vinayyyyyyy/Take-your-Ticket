@@ -15,33 +15,71 @@ The application provides end-to-end movie booking functionality, including movie
 
 The booking workflow uses **database transactions, row-level locking, seat availability validation, and concurrency control** to safely handle competing booking requests.
 
-## Key Features
+---
 
-### 🎬 Movie & Show Discovery
-- Browse available movies and scheduled shows
-- Filter movies by city, theatre, and date
-- View detailed movie and show information
+<div align="center">
 
-### 🎟️ Seat Booking
-- View seat availability for each show
-- Select multiple seats for booking
-- Validate seat selections against the show's screen
-- Prevent duplicate seat selection and conflicting bookings
+# ✨ What Can You Do?
+
+</div>
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 🎬 Movie Discovery
+
+- Browse available movies and shows
+- Filter by **city, theatre, and date**
+- View detailed movie information
+- Explore show schedules
+
+</td>
+
+<td width="50%" valign="top">
+
+### 🎟️ Ticket Booking
+
+- View real-time seat availability
+- Select multiple seats
+- Validate seats against the show's screen
 - Calculate booking prices server-side
+- Prevent conflicting bookings
 
-### 🔐 Authentication & Authorization
+</td>
+</tr>
+
+<tr>
+<td width="50%" valign="top">
+
+### 🔐 Authentication
+
 - User registration and login
 - Session-based authentication
 - Protected booking operations
-- Role-based authorization for administrative functionality
+- Role-based admin authorization
+
+</td>
+
+<td width="50%" valign="top">
 
 ### 🔌 REST APIs
-- Versioned REST endpoints under `/api/v1/`
-- JSON-based request and response handling
-- Appropriate HTTP status codes for successful and failed operations
 
-### 🗄️ Database & Concurrency
-- Relational MySQL database for movies, theatres, shows, seats, and bookings
-- Transactional booking workflow
-- Row-level locking using `SELECT ... FOR UPDATE`
-- Seat availability validation during booking
+- Versioned `/api/v1/` endpoints
+- JSON request/response handling
+- Movie, show, seat and booking APIs
+- Structured HTTP error responses
+
+</td>
+</tr>
+</table>
+
+<br>
+
+<div align="center">
+
+### 🛡️ The Technical Core
+
+**Transactions** &nbsp; • &nbsp; **Row-Level Locking** &nbsp; • &nbsp; **Seat Validation** &nbsp; • &nbsp; **Concurrency Control**
+
+</div>
