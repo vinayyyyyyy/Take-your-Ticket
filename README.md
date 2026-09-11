@@ -1,12 +1,15 @@
 # 🎬 Take Your Ticket
 
 <p align="center">
-  <img src="assets/main-poster.jpg" alt="Take Your Ticket" width="900">
+  <img src="assets/main-poster.jpg" alt="Take Your Ticket" width="700">
 </p>
 
 <p align="center">
   <b>A Flask-based movie ticket booking system with MySQL, REST APIs, authentication, and transaction-safe seat booking.</b>
 </p>
+
+---
+
 ## Overview
 
 **Take Your Ticket** is a Flask-based movie ticket booking system built with **Python, MySQL, Jinja2, HTML, and CSS**.
@@ -23,63 +26,70 @@ The booking workflow uses **database transactions, row-level locking, seat avail
 
 </div>
 
-<table>
-<tr>
-<td width="50%" valign="top">
+| 🎬 **Movie Discovery** | 🎟️ **Ticket Booking** |
+|:---|:---|
+| Browse movies & shows<br>Filter by **city, theatre & date**<br>View movie details & schedules | View seat availability<br>Select & validate multiple seats<br>Server-side price calculation<br>Conflict prevention |
 
-### 🎬 Movie Discovery
-
-- Browse available movies and shows
-- Filter by **city, theatre, and date**
-- View detailed movie information
-- Explore show schedules
-
-</td>
-
-<td width="50%" valign="top">
-
-### 🎟️ Ticket Booking
-
-- View real-time seat availability
-- Select multiple seats
-- Validate seats against the show's screen
-- Calculate booking prices server-side
-- Prevent conflicting bookings
-
-</td>
-</tr>
-
-<tr>
-<td width="50%" valign="top">
-
-### 🔐 Authentication
-
-- User registration and login
-- Session-based authentication
-- Protected booking operations
-- Role-based admin authorization
-
-</td>
-
-<td width="50%" valign="top">
-
-### 🔌 REST APIs
-
-- Versioned `/api/v1/` endpoints
-- JSON request/response handling
-- Movie, show, seat and booking APIs
-- Structured HTTP error responses
-
-</td>
-</tr>
-</table>
+| 🔐 **Authentication** | 🔌 **REST APIs** |
+|:---|:---|
+| Registration & login<br>Session-based authentication<br>Protected booking operations<br>Role-based admin access | Versioned `/api/v1/` endpoints<br>JSON request/response handling<br>Movie, show, seat & booking APIs<br>Structured HTTP responses |
 
 <br>
 
 <div align="center">
 
-### 🛡️ The Technical Core
+### 🛡️ Technical Core
 
-**Transactions** &nbsp; • &nbsp; **Row-Level Locking** &nbsp; • &nbsp; **Seat Validation** &nbsp; • &nbsp; **Concurrency Control**
+`TRANSACTIONS` &nbsp; • &nbsp; `ROW-LEVEL LOCKING` &nbsp; • &nbsp; `SEAT VALIDATION` &nbsp; • &nbsp; `CONCURRENCY CONTROL`
 
 </div>
+
+---
+
+<div align="center">
+
+# 🏗️ Architecture
+
+</div>
+
+```text
+                         CLIENT
+                    ┌───────────────┐
+                    │    Browser    │
+                    │      /        │
+                    │   API Client  │
+                    └───────┬───────┘
+                            │
+                       HTTP Request
+                            │
+                            ▼
+                 ┌─────────────────────┐
+                 │    Flask Backend    │
+                 │                     │
+                 │ Middleware / Auth   │
+                 │        ↓            │
+                 │ Routes / Controllers│
+                 └──────────┬──────────┘
+                            │
+                            ▼
+                 ┌─────────────────────┐
+                 │    Service Layer   │
+                 │                     │
+                 │ Movie Operations    │
+                 │ Booking Operations  │
+                 └──────────┬──────────┘
+                            │
+                            ▼
+                 ┌─────────────────────┐
+                 │       MySQL         │
+                 │                     │
+                 │ Queries /           │
+                 │ Transactions /      │
+                 │ Row-Level Locks     │
+                 └──────────┬──────────┘
+                            │
+                            ▼
+                       Result Data
+                       ↙        ↘
+                    HTML         JSON
+                    Jinja      REST API
