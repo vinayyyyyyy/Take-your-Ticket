@@ -52,44 +52,375 @@ The booking workflow uses **database transactions, row-level locking, seat avail
 
 </div>
 
-```text
-                         CLIENT
-                    ┌───────────────┐
-                    │    Browser    │
-                    │      /        │
-                    │   API Client  │
-                    └───────┬───────┘
-                            │
-                       HTTP Request
-                            │
-                            ▼
-                 ┌─────────────────────┐
-                 │    Flask Backend    │
-                 │                     │
-                 │ Middleware / Auth   │
-                 │        ↓            │
-                 │ Routes / Controllers│
-                 └──────────┬──────────┘
-                            │
-                            ▼
-                 ┌─────────────────────┐
-                 │    Service Layer   │
-                 │                     │
-                 │ Movie Operations    │
-                 │ Booking Operations  │
-                 └──────────┬──────────┘
-                            │
-                            ▼
-                 ┌─────────────────────┐
-                 │       MySQL         │
-                 │                     │
-                 │ Queries /           │
-                 │ Transactions /      │
-                 │ Row-Level Locks     │
-                 └──────────┬──────────┘
-                            │
-                            ▼
-                       Result Data
-                       ↙        ↘
-                    HTML         JSON
-                    Jinja      REST API
+    CLIENT
+       │
+       │ HTTP Request
+       ▼
+    Flask Backend
+       │
+       ├── Authentication / Middleware
+       │
+       └── Routes / Controllers
+               │
+               ▼
+         Service Layer
+               │
+               ├── Movie Operations
+               └── Booking Operations
+                       │
+                       ▼
+                    MySQL
+                       │
+                       ├── Queries
+                       ├── Transactions
+                       └── Row-Level Locks
+                       │
+                       ▼
+                  Result Data
+                   ↙       ↘
+                 HTML      JSON
+                 Jinja    REST API
+
+---
+
+<div align="center">
+
+# 🎟️ Booking Engine
+
+### From seat selection to a transaction-safe booking
+
+</div>
+
+    User selects seats
+            │
+            ▼
+      POST Booking Request
+            │
+            ▼
+     Authentication Check
+            │
+            ▼
+      Booking Controller
+            │
+            ▼
+       Booking Service
+            │
+            ▼
+       Start Transaction
+            │
+            ▼
+        Lock Show Row
+            │
+            ▼
+      Lock Selected Seats
+            │
+            ▼
+       Validate Seat Set
+            │
+            ▼
+     Check Existing Booking
+            │
+            ▼
+        Calculate Price
+            │
+            ▼
+        Create Booking
+            │
+            ▼
+      Create Booking Seats
+            │
+            ▼
+           COMMIT
+            │
+            ▼
+         HTML / JSON
+
+---
+
+<div align="center">
+
+# 🔒 Concurrency & Transaction Safety
+
+</div>
+
+The booking service uses **MySQL row-level locking** with:
+
+    SELECT ... FOR UPDATE
+
+inside a database transaction.
+
+    Start Transaction
+           │
+           ▼
+       Lock Show
+           │
+           ▼
+       Lock Seats
+           │
+           ▼
+    Validate Availability
+           │
+           ▼
+      Calculate Price
+           │
+           ▼
+      Create Booking
+           │
+           ▼
+    Create Booking Seats
+           │
+           ▼
+         COMMIT
+
+If an operation fails:
+
+    Exception
+        │
+        ▼
+     ROLLBACK
+
+This coordinates concurrent booking requests at the **database level** and prevents partially completed booking operations.
+
+---
+
+<div align="center">
+
+# 🗄️ Database
+
+### MySQL 8.0 • InnoDB • Relational Data Model
+
+</div>
+
+    movies
+       │
+       ▼
+     shows
+       │
+       ├───────────────┐
+       ▼               ▼
+    screens      show_seat_prices
+       │
+       ▼
+    theatres
+
+    users
+       │
+       ▼
+    bookings
+       │
+       ▼
+    booking_seats
+       │
+       ▼
+    seats
+       │
+       ▼
+    seat_categories
+
+### 📊 Project Dataset
+
+| Entity | Records |
+|:---|---:|
+| 🎬 Movies | **9** |
+| 🏢 Theatres | **23** |
+| 🖥️ Screens | **61** |
+| 🎞️ Shows | **7,812** |
+| 💺 Seats | **10,640** |
+| 💰 Show-seat pricing records | **23,436** |
+
+---
+
+<div align="center">
+
+# 🔌 REST API
+
+### Versioned endpoints under `/api/v1/`
+
+</div>
+
+| Method | Endpoint | Purpose |
+|:---:|:---|:---|
+| `GET` | `/api/v1/movies` | Retrieve movies |
+| `GET` | `/api/v1/movies/<id>` | Retrieve movie details |
+| `GET` | `/api/v1/movies/<id>/shows` | Retrieve movie shows |
+| `GET` | `/api/v1/shows/<id>` | Retrieve show details |
+| `GET` | `/api/v1/shows/<id>/seats` | Retrieve seat availability |
+| `GET` | `/api/v1/bookings` | Retrieve user bookings |
+| `GET` | `/api/v1/bookings/<id>` | Retrieve booking details |
+| `POST` | `/api/v1/booking-summary/<id>` | Generate booking preview |
+| `POST` | `/api/v1/bookings` | Create a booking |
+
+### HTTP Response Handling
+
+    200  OK
+    201  Created
+    400  Bad Request
+    401  Unauthorized
+    403  Forbidden
+    404  Not Found
+    405  Method Not Allowed
+    409  Conflict
+    500  Internal Server Error
+
+API errors are returned as structured JSON responses.
+
+---
+
+<div align="center">
+
+# 🔐 Authentication & Authorization
+
+</div>
+
+    User
+      │
+      ▼
+    Register / Login
+      │
+      ▼
+    Credential Verification
+      │
+      ▼
+    Flask Session
+      │
+      ├───────────────┐
+      ▼               ▼
+    Authentication   Authorization
+      │               │
+      ▼               ▼
+    Protected       Role-Based
+    Routes          Admin Access
+
+Passwords are stored using **Werkzeug password hashing** rather than plaintext credentials.
+
+The application uses Flask sessions for authenticated user state and role information.
+
+---
+
+<div align="center">
+
+# ⚙️ Technology Stack
+
+</div>
+
+| Layer | Technology |
+|:---|:---|
+| 🐍 Language | **Python** |
+| 🌐 Backend | **Flask** |
+| 🎨 Templates | **Jinja2** |
+| 🖥️ Frontend | **HTML5 + CSS3** |
+| 🔌 API | **REST / JSON** |
+| 🗄️ Database | **MySQL 8.0** |
+| 🔗 Database Driver | **MySQL Connector/Python** |
+| 🔐 Security | **Flask Sessions + Werkzeug** |
+| ⚙️ Configuration | **python-dotenv** |
+| 🚀 Server | **Waitress** |
+
+---
+
+<div align="center">
+
+# 📁 Project Structure
+
+</div>
+
+    Take-your-Ticket/
+    │
+    ├── app.py
+    │
+    ├── services/
+    │   ├── movie_service.py
+    │   └── booking_service.py
+    │
+    ├── templates/
+    │   ├── booking_success.html
+    │   ├── booking_summary.html
+    │   ├── bookings.html
+    │   ├── home.html
+    │   ├── login.html
+    │   ├── movie_details.html
+    │   ├── movies.html
+    │   ├── navbar.html
+    │   ├── register.html
+    │   └── show_details.html
+    │
+    ├── static/
+    │   ├── css/
+    │   │   └── style.css
+    │   └── images/
+    │
+    ├── assets/
+    │   └── main-poster.jpg
+    │
+    ├── tests/
+    │   └── test_api.py
+    │
+    ├── requirements.txt
+    ├── .gitignore
+    └── README.md
+
+---
+
+<div align="center">
+
+# 🚀 Getting Started
+
+</div>
+
+### 1. Clone the repository
+
+    git clone https://github.com/vinayyyyyyy/Take-your-Ticket.git
+    cd Take-your-Ticket
+
+### 2. Create a virtual environment
+
+**Windows**
+
+    python -m venv venv
+    venv\Scripts\activate
+
+**Linux / macOS**
+
+    python3 -m venv venv
+    source venv/bin/activate
+
+### 3. Install dependencies
+
+    pip install -r requirements.txt
+
+### 4. Configure MySQL
+
+Create the database:
+
+    bookmyshow_v2
+
+Import the project's SQL database dump into MySQL.
+
+### 5. Configure environment variables
+
+Create a `.env` file:
+
+    SECRET_KEY=your-secret-key
+
+    DB_HOST=localhost
+    DB_USER=your-mysql-user
+    DB_PASSWORD=your-mysql-password
+    DB_NAME=bookmyshow_v2
+
+    FLASK_DEBUG=false
+
+### 6. Run the application
+
+    python app.py
+
+---
+
+<div align="center">
+
+### 🎬 Browse Movies → 🎟️ Select Seats → 🔒 Validate → 💳 Book → ✅ Confirm
+
+<br>
+
+**Take Your Ticket**
+
+</div>
