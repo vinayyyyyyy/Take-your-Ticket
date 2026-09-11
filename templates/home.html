@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Take Your Ticket</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    {% include "navbar.html" %}
+
+
+    <main class="landing-page">
+
+        <section class="hero">
+
+            <div class="hero-text">
+                <p class="small-heading">WELCOME TO</p>
+
+                <h1>TAKE YOUR TICKET</h1>
+
+                <p class="hero-description">
+                    Discover movies, choose your seats,
+                    and book your next cinema experience.
+                </p>
+
+                <a href="/movies" class="explore-button">
+                    Explore Movies
+                </a>
+            </div>
+
+
+            <div class="poster-area">
+
+                <img
+                    src="{{ url_for('static', filename='images/landing/mainposter.jpg') }}"
+                    class="poster main-poster"
+                    alt="Main movie poster"
+                >
+
+                <img
+                    src="{{ url_for('static', filename='images/landing/all time favourites.jpg') }}"
+                    class="poster favourites-poster"
+                    alt="All time favourites"
+                >
+
+                <img
+                    src="{{ url_for('static', filename='images/landing/classics.jpg') }}"
+                    class="poster classics-poster"
+                    alt="Classic movies"
+                >
+
+                <img
+                    src="{{ url_for('static', filename='images/landing/Films.jpg') }}"
+                    class="poster films-poster"
+                    alt="Films"
+                >
+
+                <img
+                    src="{{ url_for('static', filename='images/landing/vintage.jpg') }}"
+                    class="poster vintage-poster"
+                    alt="Vintage cinema"
+                >
+
+            </div>
+
+        </section>
+
+
+        <section class="cinema-section">
+
+            <p class="small-heading">THE WORLD OF CINEMA</p>
+
+            <h2>Movies. Stories. Experiences.</h2>
+
+            <p>
+                Explore the latest movies and book your favourite seats.
+            </p>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

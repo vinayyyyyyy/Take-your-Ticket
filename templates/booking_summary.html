@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Summary - Take Your Ticket</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    {% include "navbar.html" %}
+
+    <main class="success-page">
+        <div class="success-card">
+            <p class="small-heading success-heading">REVIEW YOUR BOOKING</p>
+
+            <h1>Booking Summary</h1>
+
+            <p class="success-message">
+                Please check your details before confirming your booking.
+            </p>
+
+            <div class="booking-info">
+                <h2>{{ show.movie_name }}</h2>
+
+                <p><strong>Theatre:</strong> {{ show.theatre }}</p>
+                <p><strong>Screen:</strong> {{ show.screen }}</p>
+                <p><strong>Show Time:</strong> {{ show.show_time }}</p>
+            </div>
+
+            <div class="selected-seats">
+                <h3>Selected Seats</h3>
+
+                <div class="seat-summary-list">
+                    {% for seat in seats %}
+                        <div class="seat-summary-row">
+                            <span>{{ seat.seat_number }}</span>
+                            <span>₹{{ "%.0f"|format(seat.price) }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="summary-total">
+                    <span>Tickets: {{ seats|length }}</span>
+                    <strong>Total: ₹{{ "%.0f"|format(total_price) }}</strong>
+                </div>
+            </div>
+
+            <form
+                method="POST"
+                action="{{ url_for('api_create_booking', show_id=show.show_id) }}"
+            >
+                {% for seat in seats %}
+                    <input
+                        type="hidden"
+                        name="seats"
+                        value="{{ seat.id }}"
+                    >
+                {% endfor %}
+
+                <button
+                    type="submit"
+                    class="confirm-button"
+                >
+                    Confirm Booking
+                </button>
+            </form>
+        </div>
+    </main>
+</body>
+
+</html>

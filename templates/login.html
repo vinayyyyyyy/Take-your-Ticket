@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Take Your Ticket</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    {% include "navbar.html" %}
+
+    <main style="max-width: 500px; margin: 60px auto; padding: 30px;">
+        <h1>Login</h1>
+
+        <form method="POST">
+            <div style="margin-bottom: 20px;">
+                <label>Email</label>
+                <input type="email" name="email" required style="width: 100%; padding: 10px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label>Password</label>
+                <input type="password" name="password" required style="width: 100%; padding: 10px;">
+            </div>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <p style="margin-top: 20px;">
+            Don't have an account?
+            <a href="/register">Register</a>
+        </p>
+    </main>
+</body>
+
+</html>

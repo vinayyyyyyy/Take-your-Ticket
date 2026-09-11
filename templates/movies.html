@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Movies - Take Your Ticket</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #222;
+        }
+
+
+        /* =========================
+           NAVBAR
+           ========================= */
+
+        nav {
+            height: 70px;
+            background-color: #111;
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 60px;
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 35px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        nav a:hover {
+            color: #ff3b30;
+        }
+
+
+        /* =========================
+           PAGE
+           ========================= */
+
+        .container {
+            padding: 50px 8%;
+        }
+
+        .container h1 {
+            font-size: 42px;
+            margin-bottom: 35px;
+        }
+
+
+        /* =========================
+           MOVIE GRID
+           ========================= */
+
+        .movies {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 35px;
+        }
+
+
+        /* =========================
+           MOVIE CARD
+           ========================= */
+
+        .movie-card {
+            background-color: white;
+
+            border-radius: 12px;
+
+            overflow: hidden;
+
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.12);
+
+            transition: transform 0.25s ease,
+                        box-shadow 0.25s ease;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-8px);
+
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+
+        /* =========================
+           POSTER
+           ========================= */
+
+        .movie-poster {
+            width: 100%;
+            height: 420px;
+
+            object-fit: contain;
+
+            display: block;
+
+            background-color: #111;
+        }
+
+
+        /* =========================
+           MOVIE INFORMATION
+           ========================= */
+
+        .movie-info {
+            padding: 22px;
+        }
+
+        .movie-info h2 {
+            font-size: 25px;
+            margin-bottom: 15px;
+        }
+
+        .movie-info p {
+            margin-bottom: 8px;
+
+            color: #666;
+
+            font-size: 15px;
+        }
+
+
+        /* =========================
+           BUTTON
+           ========================= */
+
+        .book-button {
+            display: inline-block;
+
+            margin-top: 15px;
+
+            padding: 11px 20px;
+
+            background-color: #e51b23;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 5px;
+
+            font-weight: bold;
+        }
+
+        .book-button:hover {
+            background-color: #b91218;
+        }
+
+        /* =========================
+           FILTERS
+           ========================= */
+
+        .movie-filters {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 35px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .filter-group select {
+            min-width: 180px;
+            padding: 10px 14px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+           ========================= */
+
+        @media (max-width: 900px) {
+
+            .movies {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            nav {
+                padding: 0 20px;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+
+            .movies {
+                grid-template-columns: 1fr;
+            }
+
+            .movie-filters {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .filter-group {
+                justify-content: space-between;
+            }
+
+            .filter-group select {
+                flex: 1;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    {% include "navbar.html" %}
+
+
+    <div class="container">
+
+        <h1>Movies</h1>
+
+        <form method="GET" action="/movies" class="movie-filters">
+
+            <!-- CITY -->
+            <div class="filter-group">
+                <label for="city">City:</label>
+
+                <select name="city" id="city" onchange="this.form.submit()">
+                    <option value="">All Cities</option>
+
+                    {% for city in cities %}
+                        <option
+                            value="{{ city }}"
+                            {% if city == selected_city %}selected{% endif %}
+                        >
+                            {{ city }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- THEATRE -->
+            <div class="filter-group">
+                <label for="theatre">Theatre:</label>
+
+                <select name="theatre" id="theatre" onchange="this.form.submit()">
+                    <option value="">All Theatres</option>
+
+                    {% for theatre in theatres %}
+                        <option
+                            value="{{ theatre.id }}"
+                            {% if theatre.id|string == selected_theatre %}selected{% endif %}
+                        >
+                            {{ theatre.name }}
+                            {% if not selected_city %}
+                                ({{ theatre.location }})
+                            {% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- DATE -->
+            <div class="filter-group">
+                <label for="date">Date:</label>
+
+                <select name="date" id="date" onchange="this.form.submit()">
+                    <option value="">All Dates</option>
+
+                    {% for date in dates %}
+                        <option
+                            value="{{ date }}"
+                            {% if date|string == selected_date %}selected{% endif %}
+                        >
+                            {{ date }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+
+        <div class="movies">
+
+
+            {% for movie in movies %}
+
+
+                <div class="movie-card">
+
+
+                    <img
+                        src="{{ url_for('static', filename='images/movies/' ~ movie.poster) }}"
+                        class="movie-poster"
+                        alt="{{ movie.name }}"
+                    >
+
+
+                    <div class="movie-info">
+
+                        <h2>
+                            {{ movie.name }}
+                        </h2>
+
+
+                        <p>
+                            <strong>Language:</strong>
+                            {{ movie.language }}
+                        </p>
+
+
+                        <p>
+                            <strong>Duration:</strong>
+                            {{ movie.duration }} minutes
+                        </p>
+
+
+                        <a
+                            class="book-button"
+                            href="{{ url_for(
+                                'api_movie_details',
+                                movie_id=movie.id,
+                                city=selected_city,
+                                theatre=selected_theatre,
+                                date=selected_date
+                            ) }}"
+                        >
+                            View Shows
+                        </a>
+
+                    </div>
+
+
+                </div>
+
+
+            {% endfor %}
+
+
+        </div>
+
+    </div>
+
+
+</body>
+
+</html>

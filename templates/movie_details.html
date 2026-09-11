@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ movie.name }} - Take Your Ticket</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #222;
+        }
+
+
+        /* =========================
+           NAVBAR
+           ========================= */
+
+        nav {
+            height: 70px;
+            background-color: #111;
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 60px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 35px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        nav a:hover {
+            color: #ff3b30;
+        }
+
+
+        /* =========================
+           MAIN CONTAINER
+           ========================= */
+
+        .movie-container {
+            max-width: 1100px;
+            margin: 45px auto;
+
+            padding: 0 30px;
+        }
+
+
+        /* =========================
+           BACK LINK
+           ========================= */
+
+        .back-link {
+            display: inline-block;
+
+            margin-bottom: 20px;
+
+            color: #555;
+            text-decoration: none;
+
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            color: #e51b23;
+        }
+
+
+        /* =========================
+           MOVIE SECTION
+           ========================= */
+
+        .movie-section {
+            background-color: white;
+
+            border-radius: 14px;
+
+            padding: 40px;
+
+            align-items: flex-start;
+
+            display: flex;
+
+            gap: 50px;
+
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+        }
+
+
+        /* =========================
+           POSTER
+           ========================= */
+
+        .movie-poster-container {
+            width: 300px;
+            min-width: 300px;
+
+            background-color: #111;
+
+            border-radius: 10px;
+
+            overflow: hidden;
+
+            align-self: flex-start;
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: 430px;
+
+            display: block;
+        }
+
+
+        /* =========================
+           MOVIE INFORMATION
+           ========================= */
+
+        .movie-info {
+            flex: 1;
+
+            padding-top: 5px;
+        }
+
+        .now-showing {
+            font-size: 13px;
+
+            letter-spacing: 3px;
+
+            font-weight: bold;
+
+            color: #e51b23;
+
+            margin-bottom: 12px;
+        }
+
+        .movie-info h1 {
+            font-size: 48px;
+
+            margin-bottom: 25px;
+        }
+
+        .movie-detail {
+            font-size: 17px;
+
+            color: #666;
+
+            margin-bottom: 12px;
+        }
+
+        .movie-detail strong {
+            color: #222;
+        }
+
+
+        /* =========================
+           SHOWS
+           ========================= */
+
+        .shows-title {
+            font-size: 28px;
+
+            margin-top: 42px;
+
+            margin-bottom: 20px;
+        }
+
+        .show-card {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            background-color: #fafafa;
+
+            border: 1px solid #ddd;
+
+            border-radius: 8px;
+
+            padding: 18px 20px;
+
+            margin-bottom: 14px;
+
+            transition: 0.2s ease;
+        }
+
+        .show-card:hover {
+            border-color: #e51b23;
+
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+            transform: translateX(4px);
+        }
+
+
+        /* =========================
+           THEATRE + TIME
+           ========================= */
+
+        .show-information {
+            display: flex;
+
+            align-items: center;
+
+            gap: 18px;
+        }
+
+        .show-theatre {
+            font-size: 18px;
+
+            font-weight: bold;
+        }
+
+        .show-time {
+            color: #666;
+
+            font-size: 16px;
+        }
+
+
+        /* =========================
+           SELECT SHOW BUTTON
+           ========================= */
+
+        .select-button {
+            background-color: #e51b23;
+
+            color: white;
+
+            text-decoration: none;
+
+            padding: 11px 20px;
+
+            border-radius: 5px;
+
+            font-weight: bold;
+
+            transition: 0.2s ease;
+        }
+
+        .select-button:hover {
+            background-color: #b91218;
+        }
+
+
+        /* =========================
+           NO SHOWS
+           ========================= */
+
+        .no-shows {
+            color: #777;
+
+            background-color: #f8f8f8;
+
+            border: 1px solid #ddd;
+
+            border-radius: 8px;
+
+            padding: 20px;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+           ========================= */
+
+        @media (max-width: 800px) {
+
+            nav {
+                padding: 0 20px;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .movie-section {
+                flex-direction: column;
+            }
+
+            .movie-poster-container {
+                width: 280px;
+
+                min-width: 280px;
+
+                margin: 0 auto;
+            }
+
+            .movie-info h1 {
+                font-size: 36px;
+            }
+
+            .show-card {
+                flex-direction: column;
+
+                align-items: stretch;
+
+                gap: 15px;
+            }
+
+            .select-button {
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    {% include "navbar.html" %}
+
+
+    <!-- =========================
+         MAIN CONTENT
+         ========================= -->
+
+    <main class="movie-container">
+
+
+        <!-- BACK TO MOVIES -->
+
+        <a href="/movies" class="back-link">
+            ← Back to Movies
+        </a>
+
+
+        <section class="movie-section">
+
+
+            <!-- =========================
+                 MOVIE POSTER
+                 ========================= -->
+
+            <div class="movie-poster-container">
+
+                <img
+                    src="{{ url_for('static', filename='images/movies/' ~ movie.poster) }}"
+                    class="movie-poster"
+                    alt="{{ movie.name }}"
+                >
+
+            </div>
+
+
+            <!-- =========================
+                 MOVIE INFORMATION
+                 ========================= -->
+
+            <div class="movie-info">
+
+                <p class="now-showing">
+                    NOW SHOWING
+                </p>
+
+                <h1>
+                    {{ movie.name }}
+                </h1>
+
+                <p class="movie-detail">
+                    <strong>Language:</strong>
+                    {{ movie.language }}
+                </p>
+
+                <p class="movie-detail">
+                    <strong>Duration:</strong>
+                    {{ movie.duration }} minutes
+                </p>
+
+
+                <!-- =========================
+                     SHOW LIST
+                     ========================= -->
+
+                <h2 class="shows-title">
+                    Book Tickets
+                </h2>
+
+
+                <div class="show-section">
+
+                    {% if show_groups %}
+
+                        {% if not selected_date %}
+                            <div class="date-selector">
+                                {% for show_date in available_dates %}
+                                    <a
+                                        href="{{ url_for('api_movie_details', movie_id=movie.id, city=selected_city, theatre=selected_theatre, date=show_date) }}"
+                                        class="date-button {% if loop.first %}active{% endif %}"
+                                        data-date="{{ show_date }}"
+                                    >
+                                        {{ show_date.strftime("%d %b") }}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- THEATRE SELECTOR -->
+                        <div class="theatre-selector">
+                            {% if not selected_theatre %}
+                                <a
+                                    href="{{ url_for('api_movie_details', movie_id=movie.id, city=selected_city, theatre='', date=selected_date) }}"
+                                    class="theatre-button active"
+                                >
+                                    All Theatres
+                                </a>
+                            {% else %}
+                                <a
+                                    href="{{ url_for('api_movie_details', movie_id=movie.id, city=selected_city, theatre=selected_theatre, date=selected_date) }}"
+                                    class="theatre-button active"
+                                >
+                                    {{ selected_theatre_name or 'Selected Theatre' }}
+                                </a>
+                            {% endif %}
+
+                            {% for theatre in available_theatres %}
+                                {% if not selected_theatre or theatre.id|string != selected_theatre|string %}
+                                    <a
+                                        href="{{ url_for('api_movie_details', movie_id=movie.id, city=selected_city, theatre=theatre.id, date=selected_date) }}"
+                                        class="theatre-button"
+                                    >
+                                        {{ theatre.name }}
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        {% for show_date, theatres in show_groups.items() %}
+
+                            <div
+                                class="date-section"
+                                data-date="{{ show_date }}"
+                            >
+
+                                <h2 class="show-date">
+                                    {{ show_date.strftime("%d %b %Y") }}
+                                </h2>
+
+                                {% for theatre_name, screens in theatres.items() %}
+
+                                    <div
+                                        class="theatre-section"
+                                        data-theatre="{{ theatre_name }}"
+                                    >
+
+                                        <h3 class="theatre-name">
+                                            {{ theatre_name }}
+                                        </h3>
+
+                                        {% for screen_name, screen_shows in screens.items() %}
+
+                                            <div class="screen-section">
+
+                                                <div class="screen-heading">
+
+                                                    <strong>
+                                                        {{ screen_name }}
+                                                    </strong>
+
+                                                    {% if screen_shows[0].screen_format %}
+
+                                                        <span>
+                                                            {{ screen_shows[0].screen_format }}
+                                                        </span>
+
+                                                    {% endif %}
+
+                                                </div>
+
+                                                <div class="show-times">
+
+                                                    {% for show in screen_shows %}
+
+                                                        <a
+                                                            href="{{ url_for('api_show_details', show_id=show.show_id) }}"
+                                                            class="show-time-button"
+                                                        >
+
+                                                            {{ show.show_time_display }}
+
+                                                        </a>
+
+                                                    {% endfor %}
+
+                                                </div>
+
+                                            </div>
+
+                                        {% endfor %}
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <div class="no-shows">
+                            No upcoming shows available for this movie.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const selectedDate = "{{ selected_date|default('', true) }}";
+            const dateSections = document.querySelectorAll(".date-section");
+            const dateButtons = document.querySelectorAll(".date-button");
+
+            if (!selectedDate && dateSections.length > 0) {
+                const firstDate = dateSections[0].dataset.date;
+
+                dateSections.forEach(function (section) {
+                    section.style.display = section.dataset.date === firstDate ? "block" : "none";
+                });
+
+                dateButtons.forEach(function (button) {
+                    button.classList.toggle("active", button.dataset.date === firstDate);
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>
